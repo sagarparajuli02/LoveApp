@@ -1,136 +1,225 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  final Color primaryPink = const Color(0xFF831843);
-  final Color accentOrange = const Color(0xFFec5b13);
+  String _formatCount(int value) {
+    // Keep it simple: 1420 -> 1,420
+    final s = value.toString();
+    final buf = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      final fromEnd = s.length - i;
+      buf.write(s[i]);
+      if (fromEnd > 1 && fromEnd % 3 == 1) buf.write(',');
+    }
+    return buf.toString();
+  }
+
+  String _avatarUrlForSeed(String seed) {
+    final encoded = Uri.encodeComponent(seed);
+    return "https://api.dicebear.com/7.x/avataaars/png?seed=$encoded";
+  }
 
   @override
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
-    final String email = user?.email ?? "No email available";
+    if (user == null) {
+      return const Scaffold(
+        backgroundColor: AppColors.appBlack,
+        body: Center(
+          child: Text(
+            "Please login",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
+    }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // 1. Background Gradients
-          _buildBackground(),
+    final String email = user.email ?? "No email available";
 
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
+    final userDocStream =
+        FirebaseFirestore.instance.collection('users').doc(user.uid).snapshots();
 
-                  /// HEADER
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: userDocStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            backgroundColor: AppColors.appBlack,
+            body: Center(
+              child: CircularProgressIndicator(color: Colors.white24),
+            ),
+          );
+        }
+
+        final data = snapshot.data?.data();
+        final partner1 = (data?['partner1Name'] as String?)?.trim().isNotEmpty ==
+                true
+            ? (data?['partner1Name'] as String).trim()
+            : 'Partner 1';
+        final partner2 = (data?['partner2Name'] as String?)?.trim().isNotEmpty ==
+                true
+            ? (data?['partner2Name'] as String).trim()
+            : 'Partner 2';
+        final inviteCode = (data?['inviteCode'] as String?) ?? '';
+
+        final memoriesRaw = data?['memoriesCount'];
+        final memoriesCount = (memoriesRaw is num) ? memoriesRaw.toInt() : 0;
+
+        return Scaffold(
+          backgroundColor: AppColors.appBlack,
+          body: Stack(
+            children: [
+              // 1. Background Gradients
+              _buildBackground(),
+
+              SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
                     children: [
-                      const Text(
-                        "Profile",
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                      _glassCircleIcon(Icons.settings, onTap: () {}),
-                    ],
-                  ),
+                      const SizedBox(height: 20),
 
-                  const SizedBox(height: 40),
-
-                  /// Couple Avatar Section
-                  _buildCoupleAvatars(),
-
-                  const SizedBox(height: 30),
-
-                  /// INFO SECTION
-                  Column(
-                    children: [
-                      const Text(
-                        "Sagar & Riya",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        email,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.4),
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+                      /// HEADER
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _statBox("Memories", "1,420"),
-                          const SizedBox(width: 12),
-                          _statBox("Events", "84"),
+                          const Text(
+                            "Profile",
+                            style: TextStyle(
+                              fontSize: 34,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: -1,
+                            ),
+                          ),
+                          _glassCircleIcon(Icons.settings, onTap: () {}),
                         ],
                       ),
+
+                      const SizedBox(height: 40),
+
+                      /// Couple Avatar Section
+                      _buildCoupleAvatars(
+                        partner1Seed: partner1,
+                        partner2Seed: partner2,
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      /// INFO SECTION
+                      Column(
+                        children: [
+                          Text(
+                            "$partner1 & $partner2",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            email,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.4),
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _statBox("Memories", _formatCount(memoriesCount)),
+                              const SizedBox(width: 12),
+                              if (inviteCode.isEmpty)
+                                _statBox("Events", "0")
+                              else
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('couples')
+                                      .doc(inviteCode)
+                                      .collection('events')
+                                      .snapshots(),
+                                  builder: (context, eventsSnapshot) {
+                                    final count = eventsSnapshot.hasData
+                                        ? eventsSnapshot.data!.docs.length
+                                        : 0;
+                                    return _statBox(
+                                        "Events", _formatCount(count));
+                                  },
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      /// MAIN SETTINGS
+                      _buildGlassSection([
+                        _settingsItem(Icons.person_outline, "Edit Information"),
+                        _settingsItem(Icons.share_outlined, "Couple Code",
+                            trailing: inviteCode.isEmpty
+                                ? null
+                                : Text(
+                                    inviteCode,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  )),
+                        _settingsItem(Icons.widgets_outlined, "Widgets"),
+                        _settingsItem(Icons.palette_outlined, "App Theme"),
+                        _settingsItem(
+                            Icons.auto_awesome_outlined, "Premium Features",
+                            trailing: _premiumBadge()),
+                      ]),
+
+                      const SizedBox(height: 16),
+
+                      /// EXTRA SETTINGS
+                      _buildGlassSection([
+                        _settingsItem(Icons.info_outline, "About Us"),
+                        _settingsItem(
+                            Icons.shield_outlined, "Privacy & Security"),
+                        _settingsItem(
+                            Icons.restart_alt_rounded, "Reset App Data"),
+                        _settingsItem(Icons.star_outline, "Rate Our App"),
+                      ]),
+
+                      const SizedBox(height: 16),
+
+                      /// LOGOUT
+                      _buildGlassSection([
+                        GestureDetector(
+                          onTap: () async {
+                            await FirebaseAuth.instance.signOut();
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                '/auth', (route) => false);
+                          },
+                          child: _settingsItem(
+                            Icons.logout_rounded,
+                            "Sign Out",
+                            isDestructive: true,
+                          ),
+                        ),
+                      ]),
+
+                      const SizedBox(height: 120),
                     ],
                   ),
-
-                  const SizedBox(height: 32),
-
-                  /// MAIN SETTINGS
-                  _buildGlassSection([
-                    _settingsItem(Icons.person_outline, "Edit Information"),
-                    _settingsItem(Icons.share_outlined, "Couple Code"),
-                    _settingsItem(Icons.widgets_outlined, "Widgets"),
-                    _settingsItem(Icons.palette_outlined, "App Theme"),
-                    _settingsItem(
-                        Icons.auto_awesome_outlined, "Premium Features",
-                        trailing: _premiumBadge()),
-                  ]),
-
-                  const SizedBox(height: 16),
-
-                  /// EXTRA SETTINGS
-                  _buildGlassSection([
-                    _settingsItem(Icons.info_outline, "About Us"),
-                    _settingsItem(Icons.shield_outlined, "Privacy & Security"),
-                    _settingsItem(Icons.restart_alt_rounded, "Reset App Data"),
-                    _settingsItem(Icons.star_outline, "Rate Our App"),
-                  ]),
-
-                  const SizedBox(height: 16),
-
-                  /// LOGOUT
-                  _buildGlassSection([
-                    GestureDetector(
-                      onTap: () async {
-                        await FirebaseAuth.instance.signOut();
-                        Navigator.of(context)
-                            .pushNamedAndRemoveUntil('/auth', (route) => false);
-                      },
-                      child: _settingsItem(
-                        Icons.logout_rounded,
-                        "Sign Out",
-                        isDestructive: true,
-                      ),
-                    ),
-                  ]),
-
-                  const SizedBox(height: 120),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -143,31 +232,24 @@ class ProfileScreen extends StatelessWidget {
       children: [
         Positioned.fill(
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.topRight,
-                radius: 1.3,
-                colors: [Color(0xFF3b0764), Colors.black],
-              ),
-            ),
+            decoration:
+                const BoxDecoration(gradient: AppColors.backgroundTopRight),
           ),
         ),
         Positioned.fill(
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.bottomLeft,
-                radius: 1.2,
-                colors: [Color(0xFF831843), Colors.transparent],
-              ),
-            ),
+            decoration:
+                const BoxDecoration(gradient: AppColors.backgroundBottomLeft),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildCoupleAvatars() {
+  Widget _buildCoupleAvatars({
+    required String partner1Seed,
+    required String partner2Seed,
+  }) {
     return SizedBox(
       height: 160,
       width: 240,
@@ -177,25 +259,23 @@ class ProfileScreen extends StatelessWidget {
           // Partner 1
           Positioned(
             left: 0,
-            child: _glassAvatar(
-                "https://api.dicebear.com/7.x/avataaars/png?seed=Sagar"),
+            child: _glassAvatar(_avatarUrlForSeed(partner1Seed)),
           ),
           // Partner 2
           Positioned(
             right: 0,
-            child: _glassAvatar(
-                "https://api.dicebear.com/7.x/avataaars/png?seed=Riya"),
+            child: _glassAvatar(_avatarUrlForSeed(partner2Seed)),
           ),
           // Center Heart Glow
           Container(
             height: 48,
             width: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFFFF4C81),
+              color: AppColors.heartPink,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF4C81).withOpacity(0.4),
+                  color: AppColors.heartPink.withOpacity(0.4),
                   blurRadius: 20,
                   spreadRadius: 2,
                 )
@@ -215,8 +295,8 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
-        color: Colors.white.withOpacity(0.05),
+        border: Border.all(color: AppColors.whiteA(0.10)),
+        color: AppColors.whiteA(0.05),
       ),
       child: ClipOval(
         child: Image.network(url, fit: BoxFit.cover),
@@ -232,9 +312,9 @@ class ProfileScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: AppColors.whiteA(0.05),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: AppColors.whiteA(0.10)),
           ),
           child: Column(
             children: [
@@ -268,9 +348,9 @@ class ProfileScreen extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: AppColors.whiteA(0.05),
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: AppColors.whiteA(0.10)),
           ),
           child: Column(
             children: List.generate(children.length, (index) {
@@ -280,7 +360,7 @@ class ProfileScreen extends StatelessWidget {
                   if (index != children.length - 1)
                     Divider(
                         height: 1,
-                        color: Colors.white.withOpacity(0.05),
+                        color: AppColors.whiteA(0.05),
                         indent: 60),
                 ],
               );
@@ -302,7 +382,7 @@ class ProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: isDestructive
                   ? Colors.redAccent.withOpacity(0.1)
-                  : Colors.white.withOpacity(0.05),
+                  : AppColors.whiteA(0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon,
@@ -336,7 +416,9 @@ class ProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [accentOrange, Colors.orangeAccent]),
+        gradient: const LinearGradient(
+          colors: [AppColors.accentOrange, Colors.orangeAccent],
+        ),
         borderRadius: BorderRadius.circular(8),
       ),
       child: const Text("PRO",
@@ -356,8 +438,8 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.05),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              color: AppColors.whiteA(0.05),
+              border: Border.all(color: AppColors.whiteA(0.10)),
             ),
             child: Icon(icon, color: Colors.white, size: 22),
           ),

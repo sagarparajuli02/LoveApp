@@ -8,6 +8,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart'; /
 
 import 'package:love_days/controllers/memory_controller.dart';
 import 'package:love_days/models/memory_model.dart';
+import 'package:love_days/utils/app_colors.dart';
 import 'memory_detail_screen.dart';
 
 class MemoryScreen extends StatefulWidget {
@@ -19,7 +20,23 @@ class MemoryScreen extends StatefulWidget {
 
 class _MemoryScreenState extends State<MemoryScreen> {
   final MemoryController _controller = MemoryController();
-  final Color primaryColor = const Color(0xFFec5b13);
+  static const Color primaryColor = AppColors.accentOrange;
+
+  Map<String, String>? _headersForUrl(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null || uri.host.isEmpty) return null;
+
+    final headers = <String, String>{
+      'User-Agent': 'Mozilla/5.0',
+      'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+    };
+
+    if (uri.host.endsWith('saraphotography.com.au')) {
+      headers['Referer'] = 'https://saraphotography.com.au/';
+    }
+
+    return headers;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +44,12 @@ class _MemoryScreenState extends State<MemoryScreen> {
 
     if (user == null) {
       return const Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: AppColors.appBlack,
           body: Center(child: Text("Please sign in")));
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.appBlack,
       body: Stack(
         children: [
           _buildBackground(),
@@ -87,24 +104,14 @@ class _MemoryScreenState extends State<MemoryScreen> {
       children: [
         Positioned.fill(
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.topRight,
-                radius: 1.3,
-                colors: [Color(0xFF3b0764), Colors.black],
-              ),
-            ),
+            decoration:
+                const BoxDecoration(gradient: AppColors.backgroundTopRight),
           ),
         ),
         Positioned.fill(
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.bottomLeft,
-                radius: 1.2,
-                colors: [Color(0xFF831843), Colors.transparent],
-              ),
-            ),
+            decoration:
+                const BoxDecoration(gradient: AppColors.backgroundBottomLeft),
           ),
         ),
       ],
@@ -140,9 +147,9 @@ class _MemoryScreenState extends State<MemoryScreen> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: AppColors.whiteA(0.10),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                border: Border.all(color: AppColors.whiteA(0.10)),
               ),
               child: const Icon(Icons.add, color: Colors.white, size: 28),
             ),
@@ -164,9 +171,9 @@ class _MemoryScreenState extends State<MemoryScreen> {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: AppColors.whiteA(0.05),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: AppColors.whiteA(0.10)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +184,19 @@ class _MemoryScreenState extends State<MemoryScreen> {
                         1, // Masonry grid handles varying heights, but 1:1 looks clean for the preview
                     child: Image.network(
                       memory.imageUrls.first,
+                      headers: _headersForUrl(memory.imageUrls.first),
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: AppColors.whiteA(0.05),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.broken_image_outlined,
+                            color: Colors.white54,
+                            size: 40,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 Padding(
@@ -227,7 +246,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                 right: 24,
                 top: 24),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A).withOpacity(0.9),
+              color: AppColors.modalSurface.withOpacity(0.9),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(40)),
             ),
@@ -339,7 +358,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
       hintText: hint,
       hintStyle: const TextStyle(color: Colors.white24),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.05),
+      fillColor: AppColors.whiteA(0.05),
       border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -355,7 +374,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: AppColors.whiteA(0.05),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: Colors.white10)),
         child: Row(

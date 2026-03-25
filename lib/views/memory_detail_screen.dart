@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:love_days/models/memory_model.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class MemoryDetailScreen extends StatefulWidget {
   final MemoryModel memory;
@@ -14,6 +15,24 @@ class MemoryDetailScreen extends StatefulWidget {
 class _MemoryDetailScreenState extends State<MemoryDetailScreen> {
   late PageController _pageController;
   int _currentIndex = 0;
+
+  Map<String, String>? _headersForUrl(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null || uri.host.isEmpty) return null;
+
+    // Some sites block direct image loads from apps ("hotlink protection").
+    // Sending browser-like headers often fixes it on Android/iOS.
+    final headers = <String, String>{
+      'User-Agent': 'Mozilla/5.0',
+      'Accept': 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+    };
+
+    if (uri.host.endsWith('saraphotography.com.au')) {
+      headers['Referer'] = 'https://saraphotography.com.au/';
+    }
+
+    return headers;
+  }
 
   @override
   void initState() {
@@ -32,7 +51,7 @@ class _MemoryDetailScreenState extends State<MemoryDetailScreen> {
     final images = widget.memory.imageUrls;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.appBlack,
       body: SafeArea(
         child: Column(
           children: [
@@ -67,8 +86,12 @@ class _MemoryDetailScreenState extends State<MemoryDetailScreen> {
                         PhotoViewGallery.builder(
                           itemCount: images.length,
                           builder: (context, index) {
+                            final url = images[index];
                             return PhotoViewGalleryPageOptions(
-                              imageProvider: NetworkImage(images[index]),
+                              imageProvider: NetworkImage(
+                                url,
+                                headers: _headersForUrl(url),
+                              ),
                               minScale: PhotoViewComputedScale.contained,
                               maxScale: PhotoViewComputedScale.covered * 2,
                             );
@@ -81,7 +104,7 @@ class _MemoryDetailScreenState extends State<MemoryDetailScreen> {
                           },
                           scrollPhysics: const BouncingScrollPhysics(),
                           backgroundDecoration:
-                              const BoxDecoration(color: Colors.black),
+                              const BoxDecoration(color: AppColors.appBlack),
                         ),
 
                         /// Page Indicator

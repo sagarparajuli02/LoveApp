@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class MoodSelectorSheet extends StatefulWidget {
   final String inviteCode;
@@ -66,9 +67,9 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
         ),
         padding: EdgeInsets.fromLTRB(24, 20, 24, 20 + keyboardHeight),
         decoration: BoxDecoration(
-          color: const Color(0xFF120C12).withOpacity(0.95),
+          color: AppColors.moodSheetSurface.withOpacity(0.95),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: AppColors.whiteA(0.05)),
         ),
         child: SingleChildScrollView(
           // ✅ FIX: Added scroll view for keyboard space
@@ -121,12 +122,12 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
                       duration: const Duration(milliseconds: 200),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? const Color(0xFF2D1B15)
-                            : Colors.white.withOpacity(0.05),
+                            ? AppColors.moodSelectedSurface
+                            : AppColors.whiteA(0.05),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                             color: isSelected
-                                ? const Color(0xFFec5b13)
+                                ? AppColors.accentOrange
                                 : Colors.transparent,
                             width: 2),
                       ),
@@ -155,14 +156,14 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: AppColors.whiteA(0.05),
                     borderRadius: BorderRadius.circular(20)),
                 child: TextField(
                   controller: _noteController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     icon: Icon(Icons.edit_note,
-                        color: Colors.orange.withOpacity(0.6)),
+                        color: AppColors.accentOrange.withOpacity(0.6)),
                     hintText: "Add a note... (optional)",
                     hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
                     border: InputBorder.none,
@@ -176,8 +177,8 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
                 child: ElevatedButton(
                   onPressed: selectedMoodLabel != null ? _handleUpdate : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFec5b13),
-                    disabledBackgroundColor: Colors.white.withOpacity(0.05),
+                    backgroundColor: AppColors.accentOrange,
+                    disabledBackgroundColor: AppColors.whiteA(0.05),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                   ),

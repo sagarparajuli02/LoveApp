@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:love_days/utils/app_colors.dart';
 import 'package:love_days/views/events_screen.dart';
 import 'package:love_days/views/home_screen.dart';
 import 'package:love_days/views/memories_screen.dart';
@@ -84,9 +84,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Colors.black,
-        body:
-            Center(child: CircularProgressIndicator(color: Color(0xFFec5b13))),
+        backgroundColor: AppColors.appBlack,
+        body: Center(
+            child:
+                CircularProgressIndicator(color: AppColors.accentOrange)),
       );
     }
 
@@ -103,7 +104,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
     return Scaffold(
       extendBody: true, // Crucial for the floating glass effect
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.appBlack,
       body: Stack(
         children: [
           /// 🌈 Global Gradient Background (Matches your Home Screen)
@@ -113,7 +114,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
                 gradient: RadialGradient(
                   center: Alignment.topRight,
                   radius: 1.3,
-                  colors: [Color(0xFF3b0764), Colors.black],
+                  colors: [AppColors.plum, AppColors.appBlack],
                 ),
               ),
             ),
@@ -143,9 +144,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
           child: Container(
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
+              color: AppColors.whiteA(0.08),
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white.withOpacity(0.12)),
+              border: Border.all(color: AppColors.whiteA(0.12)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -164,8 +165,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   Widget _navItem(IconData icon, String label, int index) {
     final bool isActive = _currentIndex == index;
-    final Color activeColor =
-        const Color(0xFFec5b13); // Using your orange accent
+    final Color activeColor = AppColors.accentOrange;
 
     return InkWell(
       onTap: () => setState(() => _currentIndex = index),

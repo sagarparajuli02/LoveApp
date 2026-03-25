@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class LoveWidget extends StatefulWidget {
   const LoveWidget({super.key});
@@ -45,11 +46,7 @@ class _LoveWidgetState extends State<LoveWidget> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFee2b6c), Color(0xFF221016)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.widgetGradient,
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(16),

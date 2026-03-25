@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:love_days/views/setup_screen.dart';
 import 'package:love_days/views/widgets/bottom_navigation.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class CheckCoupleScreen extends StatefulWidget {
   const CheckCoupleScreen({super.key});
@@ -88,7 +89,7 @@ class _CheckCoupleScreenState extends State<CheckCoupleScreen> {
   Widget build(BuildContext context) {
     if (_errorMessage != null) {
       return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.appBlack,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -119,10 +120,10 @@ class _CheckCoupleScreenState extends State<CheckCoupleScreen> {
     }
 
     return const Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.appBlack,
       body: Center(
         child: CircularProgressIndicator(
-          color: Color(0xFFec5b13),
+          color: AppColors.accentOrange,
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:love_days/utils/app_colors.dart';
 // Internal imports - adjusted to your project structure
 import 'package:love_days/controllers/event_controller.dart';
 import 'package:love_days/models/event_model.dart';
@@ -20,14 +21,13 @@ class _AddEventModalState extends State<AddEventModal> {
   // --- Controllers & State ---
   final TextEditingController _titleController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  final DateTime _viewingMonth = DateTime.now();
   String _selectedIconName = 'ring'; // Matches the 'name' in _customIcons
   bool _notify = true;
 
   // --- Theme Constants ---
-  final Color primaryColor = const Color(0xFFec5b13);
-  final Color glassBorder = Colors.white.withOpacity(0.15);
-  final Color glassBackground = Colors.white.withOpacity(0.08);
+  final Color primaryColor = AppColors.accentOrange;
+  final Color glassBorder = AppColors.whiteA(0.15);
+  final Color glassBackground = AppColors.whiteA(0.08);
 
   // --- Asset Icon Configuration ---
   final List<Map<String, String>> _customIcons = [
@@ -155,7 +155,7 @@ class _AddEventModalState extends State<AddEventModal> {
         hintText: "What are we celebrating?",
         hintStyle: const TextStyle(color: Colors.white24),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: AppColors.whiteA(0.05),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         border: OutlineInputBorder(
@@ -164,7 +164,7 @@ class _AddEventModalState extends State<AddEventModal> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+          borderSide: BorderSide(color: AppColors.whiteA(0.05)),
         ),
       ),
     );
@@ -174,7 +174,7 @@ class _AddEventModalState extends State<AddEventModal> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: AppColors.whiteA(0.05),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white10),
       ),
@@ -236,7 +236,7 @@ class _AddEventModalState extends State<AddEventModal> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? primaryColor.withOpacity(0.2)
-                    : Colors.white.withOpacity(0.05),
+                    : AppColors.whiteA(0.05),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isSelected ? primaryColor : Colors.white10,
@@ -260,7 +260,7 @@ class _AddEventModalState extends State<AddEventModal> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: AppColors.whiteA(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white10),
       ),

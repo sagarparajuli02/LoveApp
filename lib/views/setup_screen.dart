@@ -155,9 +155,9 @@ class _SetupScreenState extends State<SetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: AppColors.appBlack,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: AppColors.accentOrange,
         title: const Text('Set Up Your Love Story'),
       ),
       body: _isLoading
@@ -216,7 +216,7 @@ class _SetupScreenState extends State<SetupScreen> {
                           const SizedBox(height: 30),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
+                              backgroundColor: AppColors.accentOrange,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
                                 vertical: 14,

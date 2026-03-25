@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class GlassCard extends StatelessWidget {
   final Widget child;
@@ -30,19 +31,19 @@ class GlassCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.05),
+                AppColors.whiteA(0.18),
+                AppColors.whiteA(0.05),
               ],
             ),
 
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.25),
+              color: AppColors.whiteA(0.25),
               width: 1,
             ),
 
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: AppColors.blackA(0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),

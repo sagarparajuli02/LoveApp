@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:love_days/controllers/event_controller.dart';
 import 'package:love_days/models/event_model.dart';
 import 'package:love_days/views/widgets/add_event_modal.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class EventScreen extends StatelessWidget {
   final String coupleId;
@@ -15,7 +16,7 @@ class EventScreen extends StatelessWidget {
     final controller = EventController(coupleId);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.appBlack,
       body: Stack(
         children: [
           // 1. Background Gradients & Glows
@@ -81,24 +82,14 @@ class EventScreen extends StatelessWidget {
       children: [
         Positioned.fill(
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.topRight,
-                radius: 1.3,
-                colors: [Color(0xFF3b0764), Colors.black],
-              ),
-            ),
+            decoration:
+                const BoxDecoration(gradient: AppColors.backgroundTopRight),
           ),
         ),
         Positioned.fill(
           child: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.bottomLeft,
-                radius: 1.2,
-                colors: [Color(0xFF831843), Colors.transparent],
-              ),
-            ),
+            decoration:
+                const BoxDecoration(gradient: AppColors.backgroundBottomLeft),
           ),
         ),
       ],
@@ -143,9 +134,9 @@ class EventScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: AppColors.whiteA(0.10),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                border: Border.all(color: AppColors.whiteA(0.10)),
               ),
               child: const Icon(Icons.add, color: Colors.white, size: 26),
             ),
@@ -167,7 +158,7 @@ class EventScreen extends StatelessWidget {
         accentColor = Colors.pinkAccent;
         break;
       case 'ring':
-        accentColor = const Color(0xFFec5b13);
+        accentColor = AppColors.accentOrange;
         break;
       case 'plane':
         accentColor = Colors.blueAccent;
@@ -200,9 +191,9 @@ class EventScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
+              color: AppColors.whiteA(0.08),
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: AppColors.whiteA(0.10)),
             ),
             child: Row(
               children: [

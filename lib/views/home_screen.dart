@@ -4,6 +4,7 @@ import 'package:flutter/services.dart'; // Required for HapticFeedback
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:love_days/views/widgets/mood_selector_sheet.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,14 +23,14 @@ class HomeScreen extends StatelessWidget {
 
     if (user == null) {
       return const Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.appBlack,
         body: Center(
             child: Text("Please login", style: TextStyle(color: Colors.white))),
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.appBlack,
       body: Stack(
         children: [
           _buildBackground(),
@@ -115,7 +116,8 @@ class HomeScreen extends StatelessWidget {
                               children: [
                                 Text("✨ $partnerName is $status",
                                     style: TextStyle(
-                                        color: Colors.orange.withOpacity(0.9),
+                                        color: AppColors.accentOrange
+                                            .withOpacity(0.9),
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600)),
                                 if (note.isNotEmpty)
@@ -200,9 +202,9 @@ class HomeScreen extends StatelessWidget {
   Widget _statCard(String label, String value, IconData icon, Color color) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: AppColors.whiteA(0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.05))),
+          border: Border.all(color: AppColors.whiteA(0.05))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -294,9 +296,9 @@ class HomeScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: AppColors.whiteA(0.05),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withOpacity(0.1))),
+                border: Border.all(color: AppColors.whiteA(0.10))),
             child: Row(
               children: [
                 Container(
@@ -304,8 +306,7 @@ class HomeScreen extends StatelessWidget {
                   width: 56,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      gradient: const LinearGradient(
-                          colors: [Color(0xFFf0754a), Color(0xFFa23ab7)])),
+                      gradient: AppColors.moodCardGradient),
                   child: const Icon(Icons.sentiment_satisfied_alt,
                       color: Colors.white, size: 30),
                 ),
@@ -340,9 +341,9 @@ class HomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: AppColors.whiteA(0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: AppColors.whiteA(0.10)),
       ),
       child: const Row(
         children: [
@@ -377,18 +378,12 @@ class HomeScreen extends StatelessWidget {
     return Stack(children: [
       Positioned.fill(
           child: Container(
-              decoration: const BoxDecoration(
-                  gradient: RadialGradient(
-                      center: Alignment.topRight,
-                      radius: 1.3,
-                      colors: [Color(0xFF3b0764), Colors.black])))),
+              decoration:
+                  const BoxDecoration(gradient: AppColors.backgroundTopRight))),
       Positioned.fill(
           child: Container(
               decoration: const BoxDecoration(
-                  gradient: RadialGradient(
-                      center: Alignment.bottomLeft,
-                      radius: 1.2,
-                      colors: [Color(0xFF831843), Colors.transparent])))),
+                  gradient: AppColors.backgroundBottomLeft))),
     ]);
   }
 }

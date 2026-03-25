@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:love_days/auth/auth_service.dart';
+import 'package:love_days/utils/app_colors.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -42,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.favorite, size: 80, color: Colors.pink),
+                  const Icon(Icons.favorite, size: 80, color: AppColors.wine),
                   const SizedBox(height: 20),
                   const Text(
                     'Welcome to LoveDays',
