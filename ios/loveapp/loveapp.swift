@@ -46,10 +46,10 @@ struct loveappEntryView : View {
 
     var body: some View {
         VStack {
-            Text("Time:")
+            Text("Sagar:")
             Text(entry.date, style: .time)
 
-            Text("Favorite Emoji:")
+            Text("Sagar Emoji:")
             Text(entry.configuration.favoriteEmoji)
         }
     }

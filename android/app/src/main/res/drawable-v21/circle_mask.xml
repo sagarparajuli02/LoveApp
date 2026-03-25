@@ -1,0 +1,12 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Border color (white ring like your design) -->
+    <stroke
+        android:width="3dp"
+        android:color="#FFFFFF" />
+
+    <!-- Optional background inside circle (in case image loads slow) -->
+    <solid android:color="#FFFFFF"/>
+
+</shape>
