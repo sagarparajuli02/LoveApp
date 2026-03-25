@@ -1,0 +1,98 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    android:background="@drawable/widget_background"
+    android:orientation="horizontal">
+
+    <!-- IMAGE SECTION -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginEnd="12dp">
+
+        <ImageView
+            android:id="@+id/image1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_mask"/>
+
+        <ImageView
+            android:id="@+id/image2"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="-20dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_mask"/>
+    </LinearLayout>
+
+    <!-- TEXT SECTION -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NEXT ANNIVERSARY"
+            android:textColor="@color/light_blue_50"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+        <!-- Names -->
+        <TextView
+            android:id="@+id/namesText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alex Sam"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <!-- Date -->
+        <TextView
+            android:id="@+id/dateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="October 14th"
+            android:textSize="14sp"/>
+
+        <!-- Days + Percent Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+            <TextView
+                android:id="@+id/daysLeftText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="12 Days Left"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:id="@+id/percentText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="85%"
+                android:textSize="13sp"/>
+        </LinearLayout>
+
+        <!-- Progress -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:max="100"/>
+    </LinearLayout>
+
+</LinearLayout>
