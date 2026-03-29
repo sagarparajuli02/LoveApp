@@ -4,6 +4,7 @@ import 'package:flutter/services.dart'; // Required for HapticFeedback
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:love_days/views/widgets/mood_selector_sheet.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -22,10 +23,14 @@ class HomeScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: AppColors.appBlack,
         body: Center(
-            child: Text("Please login", style: TextStyle(color: Colors.white))),
+          child: Text(
+            "Please login",
+            style: context.appText.body,
+          ),
+        ),
       );
     }
 
@@ -78,19 +83,15 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 30),
                       Text(
                         _getGreeting(),
-                        style: const TextStyle(
-                            color: Colors.white38,
-                            letterSpacing: 2,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold),
+                        style: context.appText.overline,
                       ),
                       const SizedBox(height: 4),
-                      Text("$partner1 & $partner2",
-                          style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: -1)),
+                      Text(
+                        "$partner1 & $partner2",
+                        style: context.appText.heading.copyWith(
+                          letterSpacing: -1,
+                        ),
+                      ),
                       const SizedBox(height: 8),
 
                       // --- PARTNER MOOD STREAM ---
@@ -115,19 +116,18 @@ class HomeScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("✨ $partnerName is $status",
-                                    style: TextStyle(
-                                        color: AppColors.accentOrange
-                                            .withOpacity(0.9),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600)),
+                                    style: context.appText.body.copyWith(
+                                      color: AppColors.accentOrange
+                                          .withValues(alpha: 0.9),
+                                      fontWeight: FontWeight.w600,
+                                    )),
                                 if (note.isNotEmpty)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 4),
                                     child: Text("\"$note\"",
-                                        style: const TextStyle(
-                                            color: Colors.white54,
-                                            fontStyle: FontStyle.italic,
-                                            fontSize: 12)),
+                                        style: context.appText.caption.copyWith(
+                                          fontStyle: FontStyle.italic,
+                                        )),
                                   ),
                               ],
                             );
@@ -139,19 +139,22 @@ class HomeScreen extends StatelessWidget {
                         _buildMoodSelectorCard(
                             context, inviteCode, myRole, partnerName)
                       else
-                        _buildMissingCoupleCard(),
+                        _buildMissingCoupleCard(context),
 
                       const SizedBox(height: 40),
-                      _buildHeroCounter(totalDays),
+                      _buildHeroCounter(context, totalDays),
                       const SizedBox(height: 50),
-                      const Text("Our Journey",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold)),
+                      Text(
+                        "Our Journey",
+                        style: context.appText.heading,
+                      ),
                       const SizedBox(height: 20),
                       _buildStatsGrid(
-                          inviteCode, totalDays, memoriesCount, citiesCount),
+                          context,
+                          inviteCode,
+                          totalDays,
+                          memoriesCount,
+                          citiesCount),
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -166,7 +169,7 @@ class HomeScreen extends StatelessWidget {
 
   // --- GRID COMPONENT ---
   Widget _buildStatsGrid(
-      String inviteCode, int days, int memories, int cities) {
+      BuildContext context, String inviteCode, int days, int memories, int cities) {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -176,8 +179,9 @@ class HomeScreen extends StatelessWidget {
       childAspectRatio: 1.1,
       children: [
         _statCard(
+            context,
             "DAYS TOGETHER", days.toString(), Icons.favorite, Colors.redAccent),
-        _statCard("MEMORIES", memories.toString(), Icons.camera_alt,
+        _statCard(context, "MEMORIES", memories.toString(), Icons.camera_alt,
             Colors.blueAccent),
         StreamBuilder<QuerySnapshot>(
           stream: inviteCode.isEmpty
@@ -189,17 +193,18 @@ class HomeScreen extends StatelessWidget {
                   .snapshots(),
           builder: (context, snapshot) {
             final int count = snapshot.hasData ? snapshot.data!.docs.length : 0;
-            return _statCard("SPECIAL EVENTS", count.toString(),
+            return _statCard(context, "SPECIAL EVENTS", count.toString(),
                 Icons.celebration, Colors.purpleAccent);
           },
         ),
-        _statCard("CITIES VISITED", cities.toString(), Icons.location_city,
+        _statCard(context, "CITIES VISITED", cities.toString(), Icons.location_city,
             Colors.greenAccent),
       ],
     );
   }
 
-  Widget _statCard(String label, String value, IconData icon, Color color) {
+  Widget _statCard(
+      BuildContext context, String label, String value, IconData icon, Color color) {
     return Container(
       decoration: BoxDecoration(
           color: AppColors.whiteA(0.05),
@@ -211,38 +216,44 @@ class HomeScreen extends StatelessWidget {
           Icon(icon, color: color, size: 28),
           const SizedBox(height: 12),
           Text(value,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold)),
+              style: context.appText.subheading.copyWith(
+                fontWeight: FontWeight.w700,
+              )),
           const SizedBox(height: 4),
           Text(label,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white.withOpacity(0.3),
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1)),
+              style: context.appText.statLabel),
         ],
       ),
     );
   }
 
-  Widget _buildHeroCounter(int totalDays) {
+  Widget _buildHeroCounter(BuildContext context, int totalDays) {
     return Center(
       child: Column(
         children: [
-          Text(totalDays.toString(),
-              style: const TextStyle(
-                  fontSize: 90,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white)),
+          ShaderMask(
+            shaderCallback: (bounds) {
+              return const LinearGradient(
+                colors: [AppColors.accentOrange, AppColors.heartPink],
+              ).createShader(bounds);
+            },
+            child: Text(
+              totalDays.toString(),
+              style: context.appText.counter.copyWith(
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Text("DAYS TOGETHER",
-              style: TextStyle(
-                  color: Colors.white.withOpacity(0.4),
-                  letterSpacing: 4,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold)),
+              style: context.appText.counterLabel),
         ],
       ),
     );
@@ -272,12 +283,10 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.check_circle, color: Colors.white, size: 20),
                   SizedBox(width: 12),
-                  Text("Mood shared with your partner",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, color: Colors.white)),
+                  Text("Mood shared with your partner"),
                 ],
               ),
-              backgroundColor: Colors.deepPurpleAccent.withOpacity(0.9),
+              backgroundColor: Colors.deepPurpleAccent.withValues(alpha: 0.9),
               behavior: SnackBarBehavior.floating,
               duration: const Duration(seconds: 2),
               margin: const EdgeInsets.all(20),
@@ -315,20 +324,20 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Update My Mood",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
+                      Text(
+                        "Update My Mood",
+                        style: context.appText.subheading,
+                      ),
                       const SizedBox(height: 4),
                       Text("Let $partnerName know how you are feeling",
-                          style: TextStyle(
-                              color: Colors.white.withOpacity(0.4),
-                              fontSize: 13)),
+                          style: context.appText.caption.copyWith(
+                            color: Colors.white.withValues(alpha: 0.4),
+                          )),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
+                Icon(Icons.chevron_right,
+                    color: Colors.white.withValues(alpha: 0.3)),
               ],
             ),
           ),
@@ -337,7 +346,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMissingCoupleCard() {
+  Widget _buildMissingCoupleCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -345,14 +354,14 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.whiteA(0.10)),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.info_outline, color: Colors.white70),
-          SizedBox(width: 12),
+          const Icon(Icons.info_outline, color: Colors.white70),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               "We couldn't find your couple link yet. Open setup to finish reconnecting your account.",
-              style: TextStyle(color: Colors.white70, fontSize: 13),
+              style: context.appText.bodyMuted,
             ),
           ),
         ],

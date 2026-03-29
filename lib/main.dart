@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import 'package:love_days/auth/auth_screen.dart';
 import 'package:love_days/utils/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:love_days/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,13 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       // ✅ APPLY PREMIUM FONT GLOBALLY
-      theme: ThemeData(
-        useMaterial3: true,
-        textTheme: GoogleFonts.poppinsTextTheme().apply(
-          bodyColor: AppColors.textPrimary,
-          displayColor: AppColors.textPrimary,
-        ),
-      ),
+      theme: AppTheme.buildTheme(GoogleFonts.poppinsTextTheme()),
 
       home: const AuthGate(),
     );

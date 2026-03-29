@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 
 class MoodSelectorSheet extends StatefulWidget {
@@ -67,7 +68,7 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
         ),
         padding: EdgeInsets.fromLTRB(24, 20, 24, 20 + keyboardHeight),
         decoration: BoxDecoration(
-          color: AppColors.moodSheetSurface.withOpacity(0.95),
+          color: AppColors.moodSheetSurface.withValues(alpha: 0.95),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
           border: Border.all(color: AppColors.whiteA(0.05)),
         ),
@@ -84,20 +85,22 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
                     borderRadius: BorderRadius.circular(10)),
               ),
               const SizedBox(height: 30),
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text("How are you feeling?",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold)),
+                child: Text(
+                  "How are you feeling?",
+                  style: context.appText.heading,
+                ),
               ),
               const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Let your partner know your vibe right now",
-                    style: TextStyle(
-                        color: Colors.white.withOpacity(0.5), fontSize: 16)),
+                child: Text(
+                  "Let your partner know your vibe right now",
+                  style: context.appText.body.copyWith(
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                ),
               ),
               const SizedBox(height: 32),
               GridView.builder(
@@ -134,17 +137,22 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(mood['emoji'],
-                              style: const TextStyle(fontSize: 44)),
+                          Text(
+                            mood['emoji'],
+                            style: context.appText.emoji,
+                          ),
                           const SizedBox(height: 8),
-                          Text(mood['label'],
-                              style: TextStyle(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : Colors.white.withOpacity(0.7),
-                                  fontWeight: isSelected
-                                      ? FontWeight.bold
-                                      : FontWeight.normal)),
+                          Text(
+                            mood['label'],
+                            style: context.appText.body.copyWith(
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.7),
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -160,12 +168,15 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
                     borderRadius: BorderRadius.circular(20)),
                 child: TextField(
                   controller: _noteController,
-                  style: const TextStyle(color: Colors.white),
+                  style: context.appText.body,
                   decoration: InputDecoration(
                     icon: Icon(Icons.edit_note,
-                        color: AppColors.accentOrange.withOpacity(0.6)),
+                        color:
+                            AppColors.accentOrange.withValues(alpha: 0.6)),
                     hintText: "Add a note... (optional)",
-                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+                    hintStyle: context.appText.caption.copyWith(
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
                     border: InputBorder.none,
                   ),
                 ),
@@ -182,11 +193,13 @@ class _MoodSelectorSheetState extends State<MoodSelectorSheet> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                   ),
-                  child: const Text("Share with partner ❤",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
+                  child: Text(
+                    "Share with partner ❤",
+                    style: context.appText.subheading.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ],

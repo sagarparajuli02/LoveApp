@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:love_days/models/memory_model.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 
 class MemoryDetailScreen extends StatefulWidget {
@@ -67,10 +68,7 @@ class _MemoryDetailScreenState extends State<MemoryDetailScreen> {
                   ),
                   Text(
                     widget.memory.title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                    style: context.appText.subheading,
                   ),
                   const SizedBox(width: 24), // placeholder
                 ],
@@ -114,8 +112,7 @@ class _MemoryDetailScreenState extends State<MemoryDetailScreen> {
                             color: Colors.black45,
                             child: Text(
                               "${_currentIndex + 1} / ${images.length}",
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 16),
+                              style: context.appText.body,
                             ),
                           ),
                       ],

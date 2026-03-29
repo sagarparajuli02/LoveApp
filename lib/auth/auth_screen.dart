@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:love_days/auth/auth_service.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -45,9 +46,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 children: [
                   const Icon(Icons.favorite, size: 80, color: AppColors.wine),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Welcome to LoveDays',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: context.appText.heading,
                   ),
                   const SizedBox(height: 40),
                   ElevatedButton.icon(

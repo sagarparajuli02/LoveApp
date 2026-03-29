@@ -2,7 +2,9 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
+import 'package:love_days/views/couple_quotes_video/couple_quotes_video.dart';
 import 'package:love_days/views/events_screen.dart';
 import 'package:love_days/views/home_screen.dart';
 import 'package:love_days/views/memories_screen.dart';
@@ -86,8 +88,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       return const Scaffold(
         backgroundColor: AppColors.appBlack,
         body: Center(
-            child:
-                CircularProgressIndicator(color: AppColors.accentOrange)),
+            child: CircularProgressIndicator(color: AppColors.accentOrange)),
       );
     }
 
@@ -95,6 +96,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     final List<Widget> screens = [
       const HomeScreen(), // Ensure HomeScreen has a const constructor
       const MemoryScreen(),
+      const CoupleQuotesVideo(),
       if ((coupleId ?? '').isNotEmpty)
         EventScreen(coupleId: coupleId!)
       else
@@ -120,14 +122,14 @@ class _BottomNavigationState extends State<BottomNavigation> {
             ),
           ),
 
-          /// 💖 Floating Hearts
-          const FloatingHearts(),
-
           /// 📱 Active Screen with crossfade for smooth transition
           IndexedStack(
             index: _currentIndex,
             children: screens,
           ),
+
+          /// 💖 Floating Hearts (Moved here to stay visible over all screens)
+          const IgnorePointer(child: FloatingHearts()),
         ],
       ),
       bottomNavigationBar: _buildPremiumNavBar(),
@@ -152,9 +154,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _navItem(Icons.home_rounded, "Home", 0),
-                _navItem(Icons.auto_awesome_rounded, "Memories", 1),
-                _navItem(Icons.calendar_today_rounded, "Events", 2),
-                _navItem(Icons.person_rounded, "Profile", 3),
+                _navItem(Icons.auto_stories_outlined, "Memories", 1),
+                _navItem(Icons.auto_awesome, "For You", 2),
+                _navItem(Icons.calendar_today_rounded, "Events", 3),
+                _navItem(Icons.person_rounded, "Profile", 4),
               ],
             ),
           ),
@@ -185,9 +188,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              style: context.appText.navLabel.copyWith(
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                 color: isActive ? Colors.white : Colors.white38,
               ),
             ),
@@ -203,15 +205,15 @@ class _MissingCoupleDataScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
             'Couple data is missing. Please complete setup again.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+            style: context.appText.bodyMuted.copyWith(letterSpacing: 0.5),
           ),
         ),
       ),

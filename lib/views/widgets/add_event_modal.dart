@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 // Internal imports - adjusted to your project structure
 import 'package:love_days/controllers/event_controller.dart';
@@ -115,17 +116,18 @@ class _AddEventModalState extends State<AddEventModal> {
           onPressed: () => Navigator.pop(context),
           style: IconButton.styleFrom(backgroundColor: Colors.white10),
         ),
-        const Text(
+        Text(
           "Add New Event",
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          style: context.appText.subheading,
         ),
         TextButton(
           onPressed: _handleSave,
           child: Text(
             "Save",
-            style: TextStyle(
-                color: primaryColor, fontWeight: FontWeight.bold, fontSize: 16),
+            style: context.appText.body.copyWith(
+              color: primaryColor,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ],
@@ -137,9 +139,7 @@ class _AddEventModalState extends State<AddEventModal> {
       padding: const EdgeInsets.only(bottom: 12, left: 4),
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
+        style: context.appText.statLabel.copyWith(
           color: Colors.white54,
           letterSpacing: 1.5,
         ),
@@ -150,10 +150,10 @@ class _AddEventModalState extends State<AddEventModal> {
   Widget _buildTitleInput() {
     return TextField(
       controller: _titleController,
-      style: const TextStyle(color: Colors.white),
+      style: context.appText.body,
       decoration: InputDecoration(
         hintText: "What are we celebrating?",
-        hintStyle: const TextStyle(color: Colors.white24),
+        hintStyle: context.appText.caption.copyWith(color: Colors.white24),
         filled: true,
         fillColor: AppColors.whiteA(0.05),
         contentPadding:
@@ -187,7 +187,7 @@ class _AddEventModalState extends State<AddEventModal> {
               const SizedBox(width: 12),
               Text(
                 DateFormat('EEEE, MMM d, yyyy').format(_selectedDate),
-                style: const TextStyle(color: Colors.white, fontSize: 15),
+                style: context.appText.body,
               ),
             ],
           ),
@@ -209,7 +209,10 @@ class _AddEventModalState extends State<AddEventModal> {
               );
               if (picked != null) setState(() => _selectedDate = picked);
             },
-            child: Text("Change", style: TextStyle(color: primaryColor)),
+            child: Text(
+              "Change",
+              style: context.appText.navLabel.copyWith(color: primaryColor),
+            ),
           ),
         ],
       ),
@@ -235,7 +238,7 @@ class _AddEventModalState extends State<AddEventModal> {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? primaryColor.withOpacity(0.2)
+                    ? primaryColor.withValues(alpha: 0.2)
                     : AppColors.whiteA(0.05),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
@@ -269,18 +272,17 @@ class _AddEventModalState extends State<AddEventModal> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
+              color: primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child:
                 Icon(Icons.notifications_active, color: primaryColor, size: 20),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Text(
               "Remind me",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+              style: context.appText.body,
             ),
           ),
           Switch(
@@ -305,11 +307,10 @@ class _AddEventModalState extends State<AddEventModal> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           elevation: 0,
         ),
-        child: const Text(
+        child: Text(
           "Create Special Event",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          style: context.appText.body.copyWith(
+            fontWeight: FontWeight.w700,
             color: Colors.white,
           ),
         ),

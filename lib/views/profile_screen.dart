@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -28,12 +29,12 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: AppColors.appBlack,
         body: Center(
           child: Text(
             "Please login",
-            style: TextStyle(color: Colors.white),
+            style: context.appText.body,
           ),
         ),
       );
@@ -88,14 +89,10 @@ class ProfileScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             "Profile",
-                            style: TextStyle(
-                              fontSize: 34,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: -1,
-                            ),
+                            style: context.appText.heading
+                                .copyWith(letterSpacing: -1),
                           ),
                           _glassCircleIcon(Icons.settings, onTap: () {}),
                         ],
@@ -116,29 +113,30 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           Text(
                             "$partner1 & $partner2",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
+                            style: context.appText.subheading.copyWith(
                               letterSpacing: -0.5,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             email,
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.4),
-                              fontSize: 14,
+                            style: context.appText.caption.copyWith(
+                              color: Colors.white.withValues(alpha: 0.4),
                             ),
                           ),
                           const SizedBox(height: 24),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              _statBox("Memories", _formatCount(memoriesCount)),
+                              _statBox(
+                                context,
+                                "Memories",
+                                _formatCount(memoriesCount),
+                              ),
                               const SizedBox(width: 12),
                               if (inviteCode.isEmpty)
-                                _statBox("Events", "0")
+                                _statBox(context, "Events", "0")
                               else
                                 StreamBuilder<QuerySnapshot>(
                                   stream: FirebaseFirestore.instance
@@ -151,7 +149,10 @@ class ProfileScreen extends StatelessWidget {
                                         ? eventsSnapshot.data!.docs.length
                                         : 0;
                                     return _statBox(
-                                        "Events", _formatCount(count));
+                                      context,
+                                      "Events",
+                                      _formatCount(count),
+                                    );
                                   },
                                 ),
                             ],
@@ -163,34 +164,52 @@ class ProfileScreen extends StatelessWidget {
 
                       /// MAIN SETTINGS
                       _buildGlassSection([
-                        _settingsItem(Icons.person_outline, "Edit Information"),
-                        _settingsItem(Icons.share_outlined, "Couple Code",
+                        _settingsItem(
+                          context,
+                          Icons.person_outline,
+                          "Edit Information",
+                        ),
+                        _settingsItem(context, Icons.share_outlined, "Couple Code",
                             trailing: inviteCode.isEmpty
                                 ? null
                                 : Text(
                                     inviteCode,
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.6),
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                    style: context.appText.code,
                                   )),
-                        _settingsItem(Icons.widgets_outlined, "Widgets"),
-                        _settingsItem(Icons.palette_outlined, "App Theme"),
+                        _settingsItem(context, Icons.widgets_outlined, "Widgets"),
                         _settingsItem(
-                            Icons.auto_awesome_outlined, "Premium Features",
-                            trailing: _premiumBadge()),
+                          context,
+                          Icons.palette_outlined,
+                          "App Theme",
+                        ),
+                        _settingsItem(
+                          context,
+                          Icons.auto_awesome_outlined,
+                          "Premium Features",
+                          trailing: _premiumBadge(context),
+                        ),
                       ]),
 
                       const SizedBox(height: 16),
 
                       /// EXTRA SETTINGS
                       _buildGlassSection([
-                        _settingsItem(Icons.info_outline, "About Us"),
+                        _settingsItem(context, Icons.info_outline, "About Us"),
                         _settingsItem(
-                            Icons.shield_outlined, "Privacy & Security"),
+                          context,
+                          Icons.shield_outlined,
+                          "Privacy & Security",
+                        ),
                         _settingsItem(
-                            Icons.restart_alt_rounded, "Reset App Data"),
-                        _settingsItem(Icons.star_outline, "Rate Our App"),
+                          context,
+                          Icons.restart_alt_rounded,
+                          "Reset App Data",
+                        ),
+                        _settingsItem(
+                          context,
+                          Icons.star_outline,
+                          "Rate Our App",
+                        ),
                       ]),
 
                       const SizedBox(height: 16),
@@ -204,6 +223,7 @@ class ProfileScreen extends StatelessWidget {
                                 '/auth', (route) => false);
                           },
                           child: _settingsItem(
+                            context,
                             Icons.logout_rounded,
                             "Sign Out",
                             isDestructive: true,
@@ -275,7 +295,7 @@ class ProfileScreen extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.heartPink.withOpacity(0.4),
+                  color: AppColors.heartPink.withValues(alpha: 0.4),
                   blurRadius: 20,
                   spreadRadius: 2,
                 )
@@ -304,7 +324,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _statBox(String label, String value) {
+  Widget _statBox(BuildContext context, String label, String value) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
@@ -320,19 +340,14 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+                style: context.appText.subheading.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 label.toUpperCase(),
-                style: TextStyle(
-                    color: Colors.white.withOpacity(0.3),
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1),
+                style: context.appText.statLabel,
               ),
             ],
           ),
@@ -371,7 +386,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _settingsItem(IconData icon, String title,
+  Widget _settingsItem(BuildContext context, IconData icon, String title,
       {bool isDestructive = false, Widget? trailing}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -381,7 +396,7 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: isDestructive
-                  ? Colors.redAccent.withOpacity(0.1)
+                  ? Colors.redAccent.withValues(alpha: 0.1)
                   : AppColors.whiteA(0.05),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -393,12 +408,11 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(
+              style: context.appText.body.copyWith(
                 color: isDestructive
                     ? Colors.redAccent
-                    : Colors.white.withOpacity(0.8),
+                    : Colors.white.withValues(alpha: 0.8),
                 fontWeight: FontWeight.w500,
-                fontSize: 16,
               ),
             ),
           ),
@@ -406,13 +420,13 @@ class ProfileScreen extends StatelessWidget {
               (isDestructive
                   ? const SizedBox()
                   : Icon(Icons.chevron_right,
-                      color: Colors.white.withOpacity(0.2), size: 20)),
+                      color: Colors.white.withValues(alpha: 0.2), size: 20)),
         ],
       ),
     );
   }
 
-  Widget _premiumBadge() {
+  Widget _premiumBadge(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -421,9 +435,10 @@ class ProfileScreen extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Text("PRO",
-          style: TextStyle(
-              color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+      child: Text(
+        "PRO",
+        style: context.appText.badge,
+      ),
     );
   }
 

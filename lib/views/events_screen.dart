@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:love_days/controllers/event_controller.dart';
 import 'package:love_days/models/event_model.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/views/widgets/add_event_modal.dart';
 import 'package:love_days/utils/app_colors.dart';
 
@@ -44,9 +45,11 @@ class EventScreen extends StatelessWidget {
 
                       final events = snapshot.data ?? [];
                       if (events.isEmpty) {
-                        return const Center(
-                          child: Text("No events yet. Click + to add one!",
-                              style: TextStyle(color: Colors.white54)),
+                        return Center(
+                          child: Text(
+                            "No events yet. Click + to add one!",
+                            style: context.appText.caption,
+                          ),
                         );
                       }
 
@@ -60,6 +63,7 @@ class EventScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final event = events[index];
                           return _eventCard(
+                            context: context,
                             event: event,
                             isFirst: index == 0,
                           );
@@ -106,20 +110,16 @@ class EventScreen extends StatelessWidget {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text("Celebrate Every Moment",
-                  style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.5)),
-              SizedBox(height: 4),
-              Text("Special Events",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -1)),
+            children: [
+              Text(
+                "Celebrate Every Moment",
+                style: context.appText.caption.copyWith(letterSpacing: 0.5),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "Special Events",
+                style: context.appText.heading.copyWith(letterSpacing: -1),
+              ),
             ],
           ),
           GestureDetector(
@@ -148,6 +148,7 @@ class EventScreen extends StatelessWidget {
 
   // --- Glass Event Card ---
   Widget _eventCard({
+    required BuildContext context,
     required EventModel event,
     required bool isFirst,
   }) {
@@ -177,7 +178,7 @@ class EventScreen extends StatelessWidget {
         boxShadow: isFirst
             ? [
                 BoxShadow(
-                  color: accentColor.withOpacity(0.2),
+                  color: accentColor.withValues(alpha: 0.2),
                   blurRadius: 25,
                   spreadRadius: -5,
                 )
@@ -203,9 +204,10 @@ class EventScreen extends StatelessWidget {
                   height: 56,
                   padding: const EdgeInsets.all(12), // Adjust for icon size
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.2),
+                    color: accentColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: accentColor.withOpacity(0.3)),
+                    border:
+                        Border.all(color: accentColor.withValues(alpha: 0.3)),
                   ),
                   child: Image.asset(
                     'assets/icons/${event.icon}.png',
@@ -222,16 +224,13 @@ class EventScreen extends StatelessWidget {
                     children: [
                       Text(
                         event.title,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
+                        style: context.appText.bodyMuted
+                            .copyWith(letterSpacing: 0.5),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         _formatDateWithSuffix(event.date),
-                        style: const TextStyle(
-                            color: Colors.white54, fontSize: 14),
+                        style: context.appText.caption,
                       ),
                     ],
                   ),
@@ -239,10 +238,9 @@ class EventScreen extends StatelessWidget {
                 // Countdown
                 Text(
                   _getCountdownText(event.date),
-                  style: TextStyle(
+                  style: context.appText.caption.copyWith(
                     color: isFirst ? accentColor : Colors.white54,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],

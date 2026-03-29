@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:love_days/views/setup_screen.dart';
 import 'package:love_days/views/widgets/bottom_navigation.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 
 class CheckCoupleScreen extends StatefulWidget {
@@ -105,7 +106,7 @@ class _CheckCoupleScreenState extends State<CheckCoupleScreen> {
                 Text(
                   _errorMessage!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white70, fontSize: 15),
+                  style: context.appText.bodyMuted,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(

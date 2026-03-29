@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 
 class LoveWidget extends StatefulWidget {
@@ -55,28 +56,20 @@ class _LoveWidgetState extends State<LoveWidget> {
         children: [
           Text(
             "$partner1 & $partner2",
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            style: context.appText.subheading.copyWith(
+              fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             "$totalDays Days Together",
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-              fontWeight: FontWeight.w500,
-            ),
+            style: context.appText.bodyMuted,
           ),
           const SizedBox(height: 4),
           Text(
             "Since $since",
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.white54,
-            ),
+            style: context.appText.caption,
           ),
         ],
       ),

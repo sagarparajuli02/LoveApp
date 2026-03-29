@@ -8,6 +8,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart'; /
 
 import 'package:love_days/controllers/memory_controller.dart';
 import 'package:love_days/models/memory_model.dart';
+import 'package:love_days/theme/app_text.dart';
 import 'package:love_days/utils/app_colors.dart';
 import 'memory_detail_screen.dart';
 
@@ -43,9 +44,15 @@ class _MemoryScreenState extends State<MemoryScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const Scaffold(
-          backgroundColor: AppColors.appBlack,
-          body: Center(child: Text("Please sign in")));
+      return Scaffold(
+        backgroundColor: AppColors.appBlack,
+        body: Center(
+          child: Text(
+            "Please sign in",
+            style: context.appText.body,
+          ),
+        ),
+      );
     }
 
     return Scaffold(
@@ -72,9 +79,12 @@ class _MemoryScreenState extends State<MemoryScreen> {
 
                       final memories = snapshot.data ?? [];
                       if (memories.isEmpty) {
-                        return const Center(
-                            child: Text("No memories yet",
-                                style: TextStyle(color: Colors.white54)));
+                        return Center(
+                          child: Text(
+                            "No memories yet",
+                            style: context.appText.caption,
+                          ),
+                        );
                       }
 
                       return MasonryGridView.count(
@@ -126,20 +136,16 @@ class _MemoryScreenState extends State<MemoryScreen> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text("Our Special Moments",
-                  style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1.2)),
-              SizedBox(height: 4),
-              Text("Our Memories",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -1)),
+            children: [
+              Text(
+                "Our Special Moments",
+                style: context.appText.caption.copyWith(letterSpacing: 1.2),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "Our Memories",
+                style: context.appText.heading.copyWith(letterSpacing: -1),
+              ),
             ],
           ),
           GestureDetector(
@@ -204,17 +210,16 @@ class _MemoryScreenState extends State<MemoryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(memory.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14)),
+                      Text(
+                        memory.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.fade,
+                        style: context.appText.bodyMuted
+                            .copyWith(letterSpacing: 0.5),
+                      ),
                       const SizedBox(height: 4),
                       Text(DateFormat('MMM dd, yyyy').format(memory.date),
-                          style: const TextStyle(
-                              color: Colors.white54, fontSize: 11)),
+                          style: context.appText.caption),
                     ],
                   ),
                 ),
@@ -246,7 +251,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                 right: 24,
                 top: 24),
             decoration: BoxDecoration(
-              color: AppColors.modalSurface.withOpacity(0.9),
+              color: AppColors.modalSurface.withValues(alpha: 0.9),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(40)),
             ),
@@ -263,14 +268,13 @@ class _MemoryScreenState extends State<MemoryScreen> {
                               color: Colors.white24,
                               borderRadius: BorderRadius.circular(2)))),
                   const SizedBox(height: 20),
-                  const Text("Capture a Memory",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    "Capture a Memory",
+                    style: context.appText.subheading,
+                  ),
                   const SizedBox(height: 20),
                   TextField(
-                    style: const TextStyle(color: Colors.white),
+                    style: context.appText.body,
                     decoration: _inputDecoration("What's this memory called?"),
                     onChanged: (val) => title = val,
                   ),
@@ -337,11 +341,13 @@ class _MemoryScreenState extends State<MemoryScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18)),
                     ),
-                    child: const Text("Save Memory",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.white)),
+                    child: Text(
+                      "Save Memory",
+                      style: context.appText.body.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 30),
                 ],
@@ -356,7 +362,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white24),
+      hintStyle: context.appText.caption.copyWith(color: Colors.white24),
       filled: true,
       fillColor: AppColors.whiteA(0.05),
       border: OutlineInputBorder(
@@ -381,9 +387,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
           children: [
             Icon(icon, color: primaryColor, size: 20),
             const SizedBox(width: 12),
-            Text(label,
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.w500)),
+            Text(label, style: context.appText.body),
           ],
         ),
       ),
